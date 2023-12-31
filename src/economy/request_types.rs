@@ -87,4 +87,5 @@ pub(super) enum TransactionTypeRaw {
 pub struct PurchaseLimitedResponse {
     pub purchased: bool,
     pub error_msg: String,
+    pub price: Option<u64>,
 }

@@ -52,8 +52,8 @@ pub enum PurchaseTradableLimitedError {
     /// Thrown when the user tries to buy an item for an incorrect price (or the seller
     /// somehow changed the price really fast). If this error is thrown, I would keep trying to
     /// buy the item until [`PurchaseTradableLimitedError::ItemNotForSale`] is thrown.
-    #[error("Price Changed")]
-    PriceChanged,
+    #[error("Price Changed, new price: {0}")]
+    PriceChanged(u64),
     /// Thrown when the user tries to buy their own item. There is no point in retrying after.
     #[error("Cannot Buy Own Item")]
     CannotBuyOwnItem,
@@ -601,8 +601,11 @@ mod internal {
                 "expectedCurrency": 1,
                 "expectedPrice": price,
                 "expectedSellerId": seller_id,
-                "userAssetId": uaid,
+                // "userAssetId": uaid,
             });
+
+            dbg!(&json.to_string());
+            dbg!(&formatted_url);
 
             let request_result = self
                 .reqwest_client
@@ -641,7 +644,7 @@ mod internal {
                     }
                     "This item has changed price. Please try again." => {
                         Err(RoboatError::PurchaseTradableLimitedError(
-                            PurchaseTradableLimitedError::PriceChanged,
+                            PurchaseTradableLimitedError::PriceChanged(raw.price.unwrap()),
                         ))
                     }
                     _ => Err(RoboatError::PurchaseTradableLimitedError(
