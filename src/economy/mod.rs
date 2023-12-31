@@ -601,7 +601,7 @@ mod internal {
                 "expectedCurrency": 1,
                 "expectedPrice": price,
                 "expectedSellerId": seller_id,
-                // "userAssetId": uaid,
+                "userAssetId": uaid,
             });
 
             dbg!(&json.to_string());
